@@ -45,6 +45,18 @@ class usb2snes():
                 com=com
             ))
 
+    def Name(self, name):
+        if self.attached:
+            cmd = {
+                'Opcode': 'Name',
+                'Space': 'SNES',
+                'Flags': None,
+                'Operands': [name]
+            }
+            self.conn.send(json.dumps(cmd))
+        else:
+            raise usb2snesException("Name: not attached to usb2snes.  Try executing Attach first.")
+
     def Info(self):
         if self.attached:
             cmd = {
