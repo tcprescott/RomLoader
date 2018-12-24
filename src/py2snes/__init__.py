@@ -11,7 +11,7 @@ class usb2snes():
     def __init__(self):
         self.conn = websocket.create_connection("ws://localhost:8080")
         self.attached = False
-
+        
     def close(self):
         self.conn.close()
 
@@ -39,6 +39,7 @@ class usb2snes():
             }
             self.conn.send(json.dumps(cmd))
             self.attached = True
+            return com
         else:
             self.attached = False
             raise usb2snesException("Unable to find sd2snes device {com}.  Make sure your sd2snes is powered on and usb2snes firmware installed.".format(

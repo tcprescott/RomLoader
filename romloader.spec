@@ -2,8 +2,7 @@
 
 block_cipher = None
 
-
-a = Analysis(['romloader.py'],
+a = Analysis(['src/romloader.py'],
              pathex=['D:\\Code\\RomLoader'],
              binaries=[],
              datas=[],
