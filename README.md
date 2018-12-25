@@ -4,9 +4,9 @@ Lets you easily load a ROM onto your sd2snes by using usb2snes!  Great for Rando
 
 ## Building it yourself
 
-Install pyinstaller so you can build the exe, which is a packaged python distribution (no dependancy on python) - `pip install pyinstaller`
-Install the required packages, hopefully requirements.txt is complete - `pip install -r requirements.txt`
-Build the project - `pyinstaller --onefile src/romloader.py`
+1. Install pyinstaller so you can build the exe, which is a packaged python distribution (no dependancy on python) - `pip install pyinstaller`
+2. Install the required packages, hopefully requirements.txt is complete - `pip install -r requirements.txt`
+3. Build the project - `pyinstaller --onefile src/romloader.py`
 
 Usable executable should be in the build directory.
 
