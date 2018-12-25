@@ -1,12 +1,14 @@
-import sys
-import os
-import py2snes
-import yaml
 import fnmatch
+import os
+import sys
 from time import sleep
 
-### load the configuration file (if it exists, otherwise use default config)
-scriptpath=os.path.dirname(sys.argv[0])
+import yaml
+
+from py2snes import usb2snes
+
+# load the configuration file (if it exists, otherwise use default config)
+scriptpath = os.path.dirname(sys.argv[0])
 
 try:
     with open(scriptpath + "\\romloader.yaml") as configfile:
@@ -26,18 +28,20 @@ except FileNotFoundError:
     except FileNotFoundError:
         config = {"default_destination": '/romloader'}
 
+
 def main():
     try:
-        rompath=sys.argv[1]
+        rompath = sys.argv[1]
     except IndexError:
         print('We need a path to the ROM file to load.')
         sys.exit(1)
-    filename=os.path.basename(rompath)
+    filename = os.path.basename(rompath)
 
-    ### initiate connection to the websocket server
-    conn = py2snes.usb2snes()
+    # initiate connection to the websocket server
+    conn = usb2snes()
 
-    ### Attach to usb2snes, use the device configured if it is set, otherwise have it find the first device.
+    # Attach to usb2snes, use the device configured if it is set, otherwise
+    # have it find the first device.
     if "device" in config:
         print('Attaching to specified device {device}'.format(
             device=config['device']
@@ -47,7 +51,7 @@ def main():
         print('Attaching to first device found.')
         com = conn.Attach()
     print('Attached to device \"{com}\"'.format(
-        com = com
+        com=com
     ))
 
     conn.Name('RomLoader')
@@ -76,12 +80,15 @@ def main():
     print("copying rom to {fullpath}".format(
         fullpath=path + '/' + romname
     ))
-    conn.PutFile(rompath,path + '/' + romname)
+    conn.PutFile(rompath, path + '/' + romname)
     print("verifying rom copy is complete")
     conn.List(path)
     print("booting rom")
     conn.Boot(path + '/' + romname)
     conn.close()
+
+    sleep(15)
+
 
 def matchrule(name):
     if "rules" in config:
@@ -91,21 +98,20 @@ def matchrule(name):
     else:
         return None
 
+
 def get_destination(rule, romname):
     print('----------------------------')
     for idx, dest in enumerate(config['rules'][rule]['destinations']):
         print(str(idx) + ' - ' + dest['name'])
-    destination_index = input('What destination (enter to chose 0)? ')
-    print(destination_index)
-    if destination_index == '':
-        destination_index = 0
-    path = config['rules'][rule]['destinations'][int(destination_index)]['path']
+    dst_idx = input('What destination (enter to chose 0)? ')
+    print(dst_idx)
+    if dst_idx == '':
+        dst_idx = 0
+    path = config['rules'][rule]['destinations'][int(dst_idx)]['path']
     try:
-        name = config['rules'][rule]['destinations'][int(destination_index)]['romname']
+        name = config['rules'][rule]['destinations'][int(dst_idx)]['romname']
     except KeyError:
         name = romname
     return path, name
-
-    sleep(15)
 
 main()
