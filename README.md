@@ -2,6 +2,14 @@
 
 Lets you easily load a ROM onto your sd2snes by using usb2snes!  Great for Rando runners, and especially great for MSU-1 users.
 
+## Building it yourself
+
+Install pyinstaller so you can build the exe, which is a packaged python distribution (no dependancy on python) - `pip install pyinstaller`
+Install the required packages, hopefully requirements.txt is complete - `pip install -r requirements.txt`
+Build the project - `pyinstaller --onefile src/romloader.py`
+
+Usable executable should be in the build directory.
+
 ## Usage
 
 Put romloader.exe in a place that is likely not to change.  Copy romloader.yaml to the same directory as your romloader.exe if you want to customize the behavior.  Have Windows open the .sfc or .smc file with romloader.exe!
@@ -108,9 +116,9 @@ rules:
 
 ## Troubleshooting
 
-Problem: RomLoader hangs without any input
+**Problem**: RomLoader hangs without any input
 
-Solutions:
+**Solution**:
 1. try restaring usb2snes.exe
 2. power off and back on your sd2snes
 3. load a game that doesn't use MSU-1 or a special chip via the sd2snes menu
@@ -118,17 +126,17 @@ Solutions:
 Basically RomLoader is having trouble interacting with the usb2snes.
 
 
-Problem: MSU-1 music doesn't play as expected.
+**Problem**: MSU-1 music doesn't play as expected.
 
-Solutions: In my testing, I've noticed that sometimes the music won't load
+**Solution**: In my testing, I've noticed that sometimes the music won't load
 correctly if another game is currently running, especially other MSU-1 or
 special chip games.  Try resetting to the sd2snes menu first before loading
 your game.
 
 
-Problem: MSU-1 music freezes and plays a really loud sound while RomLoader is
+**Problem**: MSU-1 music freezes and plays a really loud sound while RomLoader is
 copying the ROM to the SD card.
 
-Solution: This is a current limitation of MSU-1 and usb2snes.  If this is
+**Solution**: This is a current limitation of MSU-1 and usb2snes.  If this is
 annoying (especially if streaming), go to the sd2snes menu first before loading
 a ROM.
