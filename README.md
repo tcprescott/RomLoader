@@ -128,6 +128,7 @@ your game.
 
 Problem: MSU-1 music freezes and plays a really loud sound while RomLoader is
 copying the ROM to the SD card.
+
 Solution: This is a current limitation of MSU-1 and usb2snes.  If this is
 annoying (especially if streaming), go to the sd2snes menu first before loading
 a ROM.
