@@ -44,7 +44,7 @@ def main():
     try:
         rompath = sys.argv[1]
     except IndexError:
-        print('We need a path to the ROM file to load.')
+        raise IndexError('We need a path to the ROM file to load.')
         sys.exit(1)
     filename = os.path.basename(rompath)
 
