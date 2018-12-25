@@ -2,4 +2,5 @@ import py2snes
 
 conn = py2snes.usb2snes()
 conn.Attach()
-print(conn.Info())
+conn.MakeDir('/pytest2')
+# print(conn.List('/pytest'))

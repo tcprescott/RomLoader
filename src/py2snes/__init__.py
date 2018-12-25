@@ -186,11 +186,11 @@ class usb2snes():
     def List(self,dirpath):
         if not self.attached:
             raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
-        elif not dirpath.startswith('/'):
+        elif not dirpath.startswith('/') and not dirpath in ['','/']:
             raise usb2snesException("Path \"{path}\" should start with \"/\"".format(
                 path=dirpath
             ))
-        elif dirpath.endswith('/'):
+        elif dirpath.endswith('/') and not dirpath in ['','/']:
             raise usb2snesException("Path \"{path}\" should not end with \"/\"".format(
                 path=dirpath
             ))
@@ -207,7 +207,7 @@ class usb2snes():
                     if any(d['filename'].lower() == node for d in parentlist):
                         continue
                     else:
-                        raise usb2snesException("directory {path} does not exist.".format(
+                        raise FileNotFoundError("directory {path} does not exist on usb2snes.".format(
                             path=dirpath
                         ))
             return self._list(dirpath)
@@ -217,16 +217,16 @@ class usb2snes():
     def MakeDir(self,dirpath):
         if not self.attached:
             raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
-        if not dirpath in ['','/']:
-            # self._makedir(dirpath)
-            path = dirpath.split('/')
-            parent = '/'.join(path[:-1])
-            parentdir = self.List(parent)
-            if not self.List(dirpath):
-                self._makedir(dirpath)
-            return True
-        else:
-            raise usb2snesException('MakeDir: dirpath cannot be blank or /')
+        if dirpath in ['','/']:
+            raise usb2snesException('MakeDir: dirpath cannot be blank or \"/\"')
+
+        path = dirpath.split('/')
+        parent = '/'.join(path[:-1])
+        parentdir = self.List(parent)
+        try:
+            self.List(dirpath)
+        except FileNotFoundError as e:
+            self._makedir(dirpath)
 
     # def Remove(self,filepath):
     #     if self.attached:
@@ -264,11 +264,14 @@ class usb2snes():
         it = iter(json.loads(result)['Results'])
         resultlist = []
         for item in it:
+            filetype = item
+            filename = next(it)
             resultdict = {
-                "type": item,
-                "filename": next(it)
+                "type": filetype,
+                "filename": filename
             }
-            resultlist.append(resultdict)
+            if not filename in ['.','..']:
+                resultlist.append(resultdict)
         return resultlist
         
 
