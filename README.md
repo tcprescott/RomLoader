@@ -109,9 +109,25 @@ rules:
 ## Troubleshooting
 
 Problem: RomLoader hangs without any input
+
 Solutions:
 1. try restaring usb2snes.exe
 2. power off and back on your sd2snes
-3. load a non-special chip/MSU1 ROM through the sd2snes menu
+3. load a game that doesn't use MSU-1 or a special chip via the sd2snes menu
 
 Basically RomLoader is having trouble interacting with the usb2snes.
+
+
+Problem: MSU-1 music doesn't play as expected.
+
+Solutions: In my testing, I've noticed that sometimes the music won't load
+correctly if another game is currently running, especially other MSU-1 or
+special chip games.  Try resetting to the sd2snes menu first before loading
+your game.
+
+
+Problem: MSU-1 music freezes and plays a really loud sound while RomLoader is
+copying the ROM to the SD card.
+Solution: This is a current limitation of MSU-1 and usb2snes.  If this is
+annoying (especially if streaming), go to the sd2snes menu first before loading
+a ROM.
