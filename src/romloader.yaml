@@ -7,8 +7,6 @@
 ### Make sure this directory exists on your SD card (will try to create it if /romloader)
 default_destination: "/romloader"
 
-debug_copypath: "C:\\Users\\tprescott.THOMAS-PC\\Downloads\\ALttP - VT_er-no-glitches-0.6.1.5_normal-open-dungeons_key-sanity_0kGZEDeBym.sfc"
-
 ### a set of rules to use to put certain ROMs in certain locations, such as your randomizer ROMs, useful for MSU1 users
 rules:
   alttpr:
