@@ -105,3 +105,13 @@ rules:
       - name: default
         path: "/SuperMetroid/Rando"
 ```
+
+## Troubleshooting
+
+Problem: RomLoader hangs without any input
+Solutions:
+1. try restaring usb2snes.exe
+2. power off and back on your sd2snes
+3. load a non-special chip/MSU1 ROM through the sd2snes menu
+
+Basically RomLoader is having trouble interacting with the usb2snes.

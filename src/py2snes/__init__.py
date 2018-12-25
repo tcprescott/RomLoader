@@ -92,7 +92,7 @@ class usb2snes():
         else:
             raise usb2snesException("Boot: not attached to usb2snes.  Try executing Attach first.")
 
-    def Menu(self, romname):
+    def Menu(self):
         if self.attached:
             cmd = {
                 'Opcode': 'Menu',

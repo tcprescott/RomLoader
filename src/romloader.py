@@ -6,6 +6,17 @@ from time import sleep
 import yaml
 
 from py2snes import usb2snes
+from py2snes import usb2snesException
+
+
+def show_exception_and_exit(exc_type, exc_value, tb):
+    import traceback
+    traceback.print_exception(exc_type, exc_value, tb)
+    input("Press key to exit.")
+    sys.exit(-1)
+
+sys.excepthook = show_exception_and_exit
+
 
 # load the configuration file (if it exists, otherwise use default config)
 scriptpath = os.path.dirname(sys.argv[0])
@@ -72,10 +83,7 @@ def main():
     else:
         path = config['default_destination']
         romname = filename
-    print("making {path} directory if it doesn't exist".format(
-        path=path
-    ))
-    conn.MakeDir('/romloader')
+        conn.MakeDir('/romloader')
     conn.List(path)
     print("copying rom to {fullpath}".format(
         fullpath=path + '/' + romname
@@ -87,7 +95,7 @@ def main():
     conn.Boot(path + '/' + romname)
     conn.close()
 
-    sleep(15)
+    sleep(5)
 
 
 def matchrule(name):
