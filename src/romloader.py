@@ -8,7 +8,6 @@ import yaml
 from py2snes import usb2snes
 from py2snes import usb2snesException
 
-
 def show_exception_and_exit(exc_type, exc_value, tb):
     import traceback
     traceback.print_exception(exc_type, exc_value, tb)
@@ -44,8 +43,11 @@ def main():
     try:
         rompath = sys.argv[1]
     except IndexError:
-        raise IndexError('We need a path to the ROM file to load.')
-        sys.exit(1)
+        try:
+            rompath = config['debug_copypath']
+        except:
+            raise IndexError('We need a path to the ROM file to load.')
+            sys.exit(1)
     filename = os.path.basename(rompath)
 
     # initiate connection to the websocket server
@@ -76,14 +78,24 @@ def main():
             except KeyError:
                 romname = filename
         elif len(config['rules'][rule]['destinations']) == 0:
-            path = config['default_destination']
+            try:
+                path = config['default_destination']
+            except KeyError:
+                path = '/romloader'
             romname = filename
         else:
             path, romname = get_destination(rule, filename)
     else:
-        path = config['default_destination']
+        try:
+            path = config['default_destination']
+        except KeyError:
+            path = '/romloader'
         romname = filename
         conn.MakeDir('/romloader')
+        
+    print("getting list of {path} to verify path exists".format(
+        path=path
+    ))
     conn.List(path)
     print("copying rom to {fullpath}".format(
         fullpath=path + '/' + romname

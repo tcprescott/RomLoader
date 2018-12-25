@@ -27,6 +27,10 @@ class usb2snes():
         return json.loads(result)['Results']
 
     def Attach(self, com=None):
+        if self.attached:
+            raise usb2snesException("Already attached to \"{com}\".".format(
+                com=self.attached
+            ))
         devicelist = self.DeviceList()
         if com==None:
             com=devicelist[0]
@@ -38,7 +42,7 @@ class usb2snes():
                 'Operands': [com]
             }
             self.conn.send(json.dumps(cmd))
-            self.attached = True
+            self.attached = com
             return com
         else:
             self.attached = False
@@ -47,125 +51,118 @@ class usb2snes():
             ))
 
     def Name(self, name):
-        if self.attached:
-            cmd = {
-                'Opcode': 'Name',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': [name]
-            }
-            self.conn.send(json.dumps(cmd))
-        else:
-            raise usb2snesException("Name: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        cmd = {
+            'Opcode': 'Name',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': [name]
+        }
+        self.conn.send(json.dumps(cmd))
 
     def Info(self):
-        if self.attached:
-            cmd = {
-                'Opcode': 'Info',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': None
-            }
-            self.conn.send(json.dumps(cmd))
-            result = self.conn.recv()
-            resultlist = json.loads(result)['Results']
-            resultdict = {
-                "firmwareversion": self._listitem(resultlist,0),
-                "versionstring": self._listitem(resultlist,1),
-                "romrunning": self._listitem(resultlist,2),
-                "flag1": self._listitem(resultlist,3),
-                "flag2": self._listitem(resultlist,4),
-            }
-            return resultdict
-        else:
-            raise usb2snesException("Info: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        cmd = {
+            'Opcode': 'Info',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': None
+        }
+        self.conn.send(json.dumps(cmd))
+        result = self.conn.recv()
+        resultlist = json.loads(result)['Results']
+        resultdict = {
+            "firmwareversion": self._listitem(resultlist,0),
+            "versionstring": self._listitem(resultlist,1),
+            "romrunning": self._listitem(resultlist,2),
+            "flag1": self._listitem(resultlist,3),
+            "flag2": self._listitem(resultlist,4),
+        }
+        return resultdict
 
     def Boot(self, romname):
-        if self.attached:
-            cmd = {
-                'Opcode': 'Boot',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': [romname]
-            }
-            self.conn.send(json.dumps(cmd))
-        else:
-            raise usb2snesException("Boot: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        cmd = {
+            'Opcode': 'Boot',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': [romname]
+        }
+        self.conn.send(json.dumps(cmd))
 
     def Menu(self):
-        if self.attached:
-            cmd = {
-                'Opcode': 'Menu',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': None
-            }
-            self.conn.send(json.dumps(cmd))
-        else:
-            raise usb2snesException("Menu: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        cmd = {
+            'Opcode': 'Menu',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': None
+        }
+        self.conn.send(json.dumps(cmd))
 
     def Reset(self):
-        if self.attached:
-            cmd = {
-                'Opcode': 'Reset',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': None
-            }
-            self.conn.send(json.dumps(cmd))
-        else:
-            raise usb2snesException("Reset: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        cmd = {
+            'Opcode': 'Reset',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': None
+        }
+        self.conn.send(json.dumps(cmd))
 
     def GetAddress(self,offset,size):
         '''untested'''
-        if self.attached:
-            cmd = {
-                'Opcode': 'GetAddress',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': [offset,size]
-            }
-            self.conn.send(json.dumps(cmd))
-            result = self.conn.recv()
-            return json.loads(result)['Results']
-        else:
-            raise usb2snesException("GetAddress: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        cmd = {
+            'Opcode': 'GetAddress',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': [offset,size]
+        }
+        self.conn.send(json.dumps(cmd))
+        result = self.conn.recv()
+        return json.loads(result)['Results']
 
     def PutAddress(self,offset,data):
         '''untested'''
-        if self.attached:
-            data_array = list(data)
-            size = '{0:x}'.format(int(len(data_array)))
-            cmd = {
-                'Opcode': 'PutAddress',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': [offset,size]
-            }
-            self.conn.send(json.dumps(cmd))
-            self.conn.send(data_array, websocket.ABNF.OPCODE_BINARY)
-        else:
-            raise usb2snesException("PutAddress: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        data_array = list(data)
+        size = '{0:x}'.format(int(len(data_array)))
+        cmd = {
+            'Opcode': 'PutAddress',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': [offset,size]
+        }
+        self.conn.send(json.dumps(cmd))
+        self.conn.send(data_array, websocket.ABNF.OPCODE_BINARY)
 
     def PutFile(self,srcpath,dstpath):
-        if self.attached:
-            fh = open(srcpath,"rb")
-            file = fh.read()
-            filearray = list(file)
-            #size operand needs to be base16 (hex) integer
-            size = '{0:x}'.format(int(len(filearray)))
-            cmd = {
-                'Opcode': 'PutFile',
-                'Space': 'SNES',
-                'Flags': None,
-                'Operands': [dstpath, size]
-            }
-            self.conn.send(json.dumps(cmd))
-            for chunk in self._chunk(filearray,1024):
-                self.conn.send(chunk, websocket.ABNF.OPCODE_BINARY)
-            fh.close()
-        else:
-            raise usb2snesException("PutFile: not attached to usb2snes.  Try executing Attach first.")
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+
+        fh = open(srcpath,"rb")
+        file = fh.read()
+        filearray = list(file)
+        #size operand needs to be base16 (hex) integer
+        size = '{0:x}'.format(int(len(filearray)))
+        cmd = {
+            'Opcode': 'PutFile',
+            'Space': 'SNES',
+            'Flags': None,
+            'Operands': [dstpath, size]
+        }
+        self.conn.send(json.dumps(cmd))
+        for chunk in self._chunk(filearray,4096):
+            self.conn.send(chunk, websocket.ABNF.OPCODE_BINARY)
+        fh.close()
 
     # def GetFile(self,filepath):
     #     """Not yet fully implemented"""
@@ -187,47 +184,49 @@ class usb2snes():
     #         raise usb2snesException("GetFile: not attached to usb2snes.  Try executing Attach first.")
 
     def List(self,dirpath):
-        if self.attached:
-            if not dirpath in ['','/']:
-                path = dirpath.split('/')
-                for idx, node in enumerate(path):
-                    if node == '':
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        elif not dirpath.startswith('/'):
+            raise usb2snesException("Path \"{path}\" should start with \"/\"".format(
+                path=dirpath
+            ))
+        elif dirpath.endswith('/'):
+            raise usb2snesException("Path \"{path}\" should not end with \"/\"".format(
+                path=dirpath
+            ))
+
+        if not dirpath in ['','/']:
+            path = dirpath.lower().split('/')
+            for idx, node in enumerate(path):
+                if node == '':
+                    continue
+                else:
+                    parent = '/'.join(path[:idx])
+                    parentlist = self._list(parent)
+                    
+                    if any(d['filename'].lower() == node for d in parentlist):
                         continue
                     else:
-                        parent = '/'.join(path[:idx])
-                        parentlist = self._list(parent)
-                        
-                        if any(d['filename'] == node for d in parentlist):
-                            continue
-                        else:
-                            return False
-                            break
-                return self._list(dirpath)
-            else:
-                return self._list(dirpath)
+                        raise usb2snesException("directory {path} does not exist.".format(
+                            path=dirpath
+                        ))
+            return self._list(dirpath)
         else:
-            raise usb2snesException("List: not attached to usb2snes.  Try executing Attach first.")
+            return self._list(dirpath)
 
     def MakeDir(self,dirpath):
-        if self.attached:
-            if not dirpath in ['','/']:
-                # self._makedir(dirpath)
-                path = dirpath.split('/')
-                parent = '/'.join(path[:-1])
-                parentdir = self.List(parent)
-                if parentdir:
-                    if not self.List(dirpath):
-                        self._makedir(dirpath)
-                    return True
-                else:
-                    raise usb2snesException('MakeDir: cannot create {dirpath} because parent directory {parent} does not exist.'.format(
-                        dirpath=dirpath,
-                        parent=parent
-                    ))
-            else:
-                raise usb2snesException('MakeDir: dirpath cannot be blank or /')
+        if not self.attached:
+            raise usb2snesException("Not attached to usb2snes.  Try executing Attach first.")
+        if not dirpath in ['','/']:
+            # self._makedir(dirpath)
+            path = dirpath.split('/')
+            parent = '/'.join(path[:-1])
+            parentdir = self.List(parent)
+            if not self.List(dirpath):
+                self._makedir(dirpath)
+            return True
         else:
-            raise usb2snesException("MakeDir: not attached to usb2snes.  Try executing Attach first.")
+            raise usb2snesException('MakeDir: dirpath cannot be blank or /')
 
     # def Remove(self,filepath):
     #     if self.attached:
