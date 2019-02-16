@@ -50,25 +50,6 @@ def main():
             sys.exit(1)
     filename = os.path.basename(rompath)
 
-    # initiate connection to the websocket server
-    conn = usb2snes()
-
-    # Attach to usb2snes, use the device configured if it is set, otherwise
-    # have it find the first device.
-    if "device" in config:
-        print('Attaching to specified device {device}'.format(
-            device=config['device']
-        ))
-        com = conn.Attach(config['device'])
-    else:
-        print('Attaching to first device found.')
-        com = conn.Attach()
-    print('Attached to device \"{com}\"'.format(
-        com=com
-    ))
-
-    conn.Name('RomLoader')
-
     rule = matchrule(filename)
     if rule:
         if len(config['rules'][rule]['destinations']) == 1:
@@ -97,8 +78,46 @@ def main():
         path=path
     ))
     try:
+        # initiate connection to the websocket server
+        conn = usb2snes()
+
+        # Attach to usb2snes, use the device configured if it is set, otherwise
+        # have it find the first device.
+        if "device" in config:
+            print('Attaching to specified device {device}'.format(
+                device=config['device']
+            ))
+            com = conn.Attach(config['device'])
+        else:
+            print('Attaching to first device found.')
+            com = conn.Attach()
+        print('Attached to device \"{com}\"'.format(
+            com=com
+        ))
+
+        conn.Name('RomLoader')
         conn.List(path)
     except:
+        conn.close()
+        sleep(5)
+        # initiate connection to the websocket server
+        conn = usb2snes()
+
+        # Attach to usb2snes, use the device configured if it is set, otherwise
+        # have it find the first device.
+        if "device" in config:
+            print('Attaching to specified device {device}'.format(
+                device=config['device']
+            ))
+            com = conn.Attach(config['device'])
+        else:
+            print('Attaching to first device found.')
+            com = conn.Attach()
+        print('Attached to device \"{com}\"'.format(
+            com=com
+        ))
+
+        conn.Name('RomLoader')
         conn.List(path)
     print("copying rom to {fullpath}".format(
         fullpath=path + '/' + romname
