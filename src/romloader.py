@@ -92,11 +92,14 @@ def main():
             path = '/romloader'
         romname = filename
         conn.MakeDir('/romloader')
-        
+
     print("getting list of {path} to verify path exists".format(
         path=path
     ))
-    conn.List(path)
+    try:
+        conn.List(path)
+    except:
+        conn.List(path)
     print("copying rom to {fullpath}".format(
         fullpath=path + '/' + romname
     ))
