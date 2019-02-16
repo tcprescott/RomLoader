@@ -99,7 +99,7 @@ def main():
         conn.List(path)
     except:
         conn.close()
-        sleep(5)
+        sleep(1)
         # initiate connection to the websocket server
         conn = usb2snes()
 
