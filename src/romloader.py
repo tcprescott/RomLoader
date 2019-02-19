@@ -72,64 +72,48 @@ def main():
         except KeyError:
             path = '/romloader'
         romname = filename
-        conn.MakeDir('/romloader')
 
     print("getting list of {path} to verify path exists".format(
         path=path
     ))
-    try:
-        # initiate connection to the websocket server
-        conn = usb2snes()
+    for a in range(3):
+        try:
+            # initiate connection to the websocket server
+            conn = usb2snes()
 
-        # Attach to usb2snes, use the device configured if it is set, otherwise
-        # have it find the first device.
-        if "device" in config:
-            print('Attaching to specified device {device}'.format(
-                device=config['device']
+            # Attach to usb2snes, use the device configured if it is set, otherwise
+            # have it find the first device.
+            if "device" in config:
+                print('Attaching to specified device {device}'.format(
+                    device=config['device']
+                ))
+                com = conn.Attach(config['device'])
+            else:
+                print('Attaching to first device found.')
+                com = conn.Attach()
+            print('Attached to device \"{com}\"'.format(
+                com=com
             ))
-            com = conn.Attach(config['device'])
-        else:
-            print('Attaching to first device found.')
-            com = conn.Attach()
-        print('Attached to device \"{com}\"'.format(
-            com=com
-        ))
 
-        conn.Name('RomLoader')
-        conn.List(path)
-    except:
-        conn.close()
-        sleep(1)
-        # initiate connection to the websocket server
-        conn = usb2snes()
-
-        # Attach to usb2snes, use the device configured if it is set, otherwise
-        # have it find the first device.
-        if "device" in config:
-            print('Attaching to specified device {device}'.format(
-                device=config['device']
+            conn.Name('RomLoader')
+            if not rule:
+                conn.MakeDir('/romloader')
+            conn.List(path)
+            print("copying rom to {fullpath}".format(
+                fullpath=path + '/' + romname
             ))
-            com = conn.Attach(config['device'])
-        else:
-            print('Attaching to first device found.')
-            com = conn.Attach()
-        print('Attached to device \"{com}\"'.format(
-            com=com
-        ))
+            conn.PutFile(rompath, path + '/' + romname)
+            print("verifying rom copy is complete")
+            conn.List(path)
+            print("booting rom")
+            conn.Boot(path + '/' + romname)
+            conn.close()
 
-        conn.Name('RomLoader')
-        conn.List(path)
-    print("copying rom to {fullpath}".format(
-        fullpath=path + '/' + romname
-    ))
-    conn.PutFile(rompath, path + '/' + romname)
-    print("verifying rom copy is complete")
-    conn.List(path)
-    print("booting rom")
-    conn.Boot(path + '/' + romname)
-    conn.close()
-
-    sleep(5)
+            sleep(5)
+            break
+        except:
+            conn.close()
+            continue
 
 
 def matchrule(name):
