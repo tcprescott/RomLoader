@@ -73,13 +73,12 @@ def main():
             path = '/romloader'
         romname = filename
 
-    print("getting list of {path} to verify path exists".format(
-        path=path
-    ))
-    for a in range(3):
+    for a in range(10):
         try:
             # initiate connection to the websocket server
             conn = usb2snes()
+
+            devicelist = conn.DeviceList()
 
             # Attach to usb2snes, use the device configured if it is set, otherwise
             # have it find the first device.
@@ -88,6 +87,8 @@ def main():
                     device=config['device']
                 ))
                 com = conn.Attach(config['device'])
+            elif len(devicelist) > 1:
+                com = conn.Attach(get_comm_device(devicelist))
             else:
                 print('Attaching to first device found.')
                 com = conn.Attach()
@@ -111,8 +112,12 @@ def main():
 
             sleep(5)
             break
+        except KeyboardInterrupt:
+            break
         except:
+            print("Unexpected error:", sys.exc_info()[0])
             conn.close()
+            sleep(6)
             continue
 
 
@@ -139,5 +144,12 @@ def get_destination(rule, romname):
     except KeyError:
         name = romname
     return path, name
+
+def get_comm_device(devicelist):
+    print('----------------------------')
+    for idx, device in enumerate(devicelist):
+        print(str(idx) + ' - ' + device)
+    dst_idx = int(input('What device? '))
+    return devicelist[dst_idx]
 
 main()
