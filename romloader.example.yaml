@@ -53,11 +53,6 @@ rules:
   supermetroiditem:
     name_pattern:
       - "Item Randomizer *"
-    destinations:
-      - name: default
-        path: "/SuperMetroid/Rando"
-  supermetroidvaria:
-    name_pattern:
       - "VARIA_Randomizer_*"
     destinations:
       - name: default
