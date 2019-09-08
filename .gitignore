@@ -5,3 +5,4 @@ src/test.py
 src/romloader.yaml
 env/
 .vscode/
+testing/

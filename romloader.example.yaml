@@ -10,7 +10,10 @@ default_destination: "/romloader"
 ### a set of rules to use to put certain ROMs in certain locations, such as your randomizer ROMs, useful for MSU1 users
 rules:
   alttpr:
-    name_pattern: "ALttP - VT_*" # look for an input ROM that matches this name
+    name_pattern:
+      - "ALttP - VT_*" # look for an input ROM that matches this name
+      - "ER_*"
+      - "Daily Challenge_*"
     destinations:
       - name: default
         path: "/LinkToThePast/Transferred"
@@ -36,22 +39,26 @@ rules:
         path: "/LinkToThePast/MSU1/ZeldaReOrchestrated"
         romname: alttp_msu.sfc
   smz3:
-    name_pattern: "SMALttP - sm-*"
+    name_pattern:
+      - "SMALttP - sm-*"
     destinations:
       - name: default
         path: "/smz3"
   smw:
-    name_pattern: "smw-*"
+    name_pattern:
+      - "smw-*"
     destinations:
       - name: default
         path: "/SuperMarioWorld/Rando"
   supermetroiditem:
-    name_pattern: "Item Randomizer *"
+    name_pattern:
+      - "Item Randomizer *"
     destinations:
       - name: default
         path: "/SuperMetroid/Rando"
   supermetroidvaria:
-    name_pattern: "VARIA_Randomizer_*"
+    name_pattern:
+      - "VARIA_Randomizer_*"
     destinations:
       - name: default
         path: "/SuperMetroid/Rando"
