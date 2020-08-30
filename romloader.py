@@ -5,14 +5,18 @@ from time import sleep
 
 import yaml
 import py2snes
+import psutil
 
 import asyncio
+import socket
+
 
 def show_exception_and_exit(exc_type, exc_value, tb):
     import traceback
     traceback.print_exception(exc_type, exc_value, tb)
     input("Press key to exit.")
     sys.exit(-1)
+
 
 sys.excepthook = show_exception_and_exit
 
@@ -24,7 +28,8 @@ try:
     with open(scriptpath + "\\romloader.yaml") as configfile:
         try:
             config = yaml.load(configfile)
-            print("loading config file at " + os.path.abspath(scriptpath + "\\romloader.yaml"))
+            print("loading config file at " +
+                  os.path.abspath(scriptpath + "\\romloader.yaml"))
         except yaml.YAMLError as e:
             print(e)
             sys.exit(1)
@@ -33,7 +38,8 @@ except FileNotFoundError:
         with open("romloader.yaml") as configfile:
             try:
                 config = yaml.load(configfile)
-                print("loading config file at " + os.path.abspath("romloader.yaml"))
+                print("loading config file at " +
+                      os.path.abspath("romloader.yaml"))
             except yaml.YAMLError as e:
                 print(e)
                 sys.exit(1)
@@ -74,7 +80,20 @@ async def main():
 
     # initiate connection to the websocket server
     snes = py2snes.snes()
-    await snes.connect()
+
+    a_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    if is_open(64213):
+        address = 'ws://localhost:64213'
+    elif is_open(23074):
+        address = 'ws://localhost:23074'
+    elif is_open(8080):
+        address = 'ws://localhost:8080'
+    else:
+        raise Exception(
+            'Unable to connect to a suitable port!  Please ensure qusb2nes is listening on 64213, 23074, or 8080!')
+
+    await snes.connect(address=address)
 
     devicelist = await snes.DeviceList()
 
@@ -133,12 +152,18 @@ def get_destination(rule, romname):
         name = romname
     return path, name
 
+
 def get_comm_device(devicelist):
     print('----------------------------')
     for idx, device in enumerate(devicelist):
         print(str(idx) + ' - ' + device)
     dst_idx = int(input('What device? '))
     return devicelist[dst_idx]
+
+
+def is_open(port: int):
+    return port in [i.laddr.port for i in psutil.net_connections()]
+
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
