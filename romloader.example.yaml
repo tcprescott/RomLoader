@@ -7,6 +7,11 @@
 ### Make sure this directory exists on your SD card (will try to create it if /romloader)
 default_destination: "/romloader"
 
+### uncomment to have romloader write the name of the selected MSU pack to a file
+# title_output_file: "./romloader.txt"
+### default title to write for non-msu packs
+# default_title: "Not an MSU pack"
+
 ### a set of rules to use to put certain ROMs in certain locations, such as your randomizer ROMs, useful for MSU1 users
 rules:
   alttpr:
