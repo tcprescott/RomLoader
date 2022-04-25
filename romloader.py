@@ -54,6 +54,8 @@ async def main():
         raise Exception('We need a path to the ROM file to load.')
         sys.exit(1)
     filename = os.path.basename(rompath)
+    
+    title = None
 
     rule = matchrule(filename)
     if rule:
