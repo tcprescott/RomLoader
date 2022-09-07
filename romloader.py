@@ -27,7 +27,7 @@ scriptpath = os.path.dirname(sys.argv[0])
 try:
     with open(scriptpath + "\\romloader.yaml") as configfile:
         try:
-            config = yaml.load(configfile)
+            config = yaml.safe_load(configfile)
             print("loading config file at " +
                   os.path.abspath(scriptpath + "\\romloader.yaml"))
         except yaml.YAMLError as e:
@@ -37,7 +37,7 @@ except FileNotFoundError:
     try:
         with open("romloader.yaml") as configfile:
             try:
-                config = yaml.load(configfile)
+                config = yaml.safe_load(configfile)
                 print("loading config file at " +
                       os.path.abspath("romloader.yaml"))
             except yaml.YAMLError as e:
@@ -54,6 +54,8 @@ async def main():
         raise Exception('We need a path to the ROM file to load.')
         sys.exit(1)
     filename = os.path.basename(rompath)
+    
+    title = None
 
     rule = matchrule(filename)
     if rule:
@@ -70,13 +72,25 @@ async def main():
                 path = '/romloader'
             romname = filename
         else:
-            path, romname = get_destination(rule, filename)
+            path, romname, title = get_destination(rule, filename)
     else:
         try:
             path = config['default_destination']
         except KeyError:
             path = '/romloader'
         romname = filename
+
+    if not title:
+        if "default_title" in config:
+            title = config['default_title']
+        else:
+            title = 'Not an MSU pack'
+
+    if "title_output_file" in config:
+        title_output_file = os.path.abspath(config['title_output_file'])
+        with open(title_output_file, 'w') as file:
+            file.write(title)
+            print('Pack selection written to ' + title_output_file)
 
     # initiate connection to the websocket server
     snes = py2snes.snes()
@@ -148,9 +162,11 @@ def get_destination(rule, romname):
     path = config['rules'][rule]['destinations'][int(dst_idx)]['path']
     try:
         name = config['rules'][rule]['destinations'][int(dst_idx)]['romname']
+        title = config['rules'][rule]['destinations'][int(dst_idx)]['name']
     except KeyError:
         name = romname
-    return path, name
+        title = None
+    return path, name, title
 
 
 def get_comm_device(devicelist):
