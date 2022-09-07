@@ -87,7 +87,7 @@ async def main():
             title = 'Not an MSU pack'
 
     if "title_output_file" in config:
-        title_output_file = os.path.abspath(scriptpath + config['title_output_file'])
+        title_output_file = os.path.abspath(config['title_output_file'])
         with open(title_output_file, 'w') as file:
             file.write(title)
             print('Pack selection written to ' + title_output_file)
